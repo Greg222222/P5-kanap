@@ -40,8 +40,25 @@ function showItems(itemLS, apiProduct) {
   imageElement.src = apiProduct.imageUrl;
   imageElement.alt = apiProduct.altTxt;
 
+
+
+  const itemContent = document.createElement("div");
+  itemContent.classList.add("cart__item__content");
+
+  const itemDescription = document.createElement("div");
+  itemDescription.classList.add("cart__item__content__description");
   
-  
+  const itemDescriptionName = document.createElement("h2");
+  itemDescriptionName.innerText = apiProduct.name
+
+  const itemDescriptionColor = document.createElement("p");
+  itemDescriptionColor.innerText = itemLS.option
+
+  const itemDescriptionPrice = document.createElement("p");
+  itemDescriptionPrice.innerText = apiProduct.price + "€"
+
+
+
   const quantityContainer = document.createElement("div");
   quantityContainer.classList.add("quantity");
 
@@ -57,14 +74,28 @@ function showItems(itemLS, apiProduct) {
   itemQuantity.max = 100
   itemQuantity.value = itemLS.quantity
 
+  const deleteElementContainer = document.createElement("div");
+  deleteElementContainer.classList.add("cart__item__content__settings__delete");
+
+  const deleteElement = document.createElement("p")
+  deleteElement.innerText = "Supprimer"
+
 
   cart.appendChild(cartArticle)
   imageContainer.appendChild(imageElement)
   cartArticle.appendChild(imageContainer) 
+  cartArticle.appendChild(itemContent)
+  itemContent.appendChild(itemDescription)
   cartArticle.appendChild(quantityContainer);
+  itemDescription.appendChild(itemDescriptionName)
+  itemDescription.appendChild(itemDescriptionColor)
+  itemDescription.appendChild(itemDescriptionPrice)
   quantityContainer.appendChild(innerQuantityContainer)
-  innerQuantityContainer.appendChild(itemQuantity)
+  quantityContainer.appendChild(deleteElementContainer)
   innerQuantityContainer.appendChild(quantityText)
+  innerQuantityContainer.appendChild(itemQuantity)
+  deleteElementContainer.appendChild(deleteElement)
+
 
   
 
