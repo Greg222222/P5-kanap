@@ -73,17 +73,9 @@ function showItems(itemLS, apiProduct) {
   itemQuantity.min = 1;
   itemQuantity.max = 100;
   itemQuantity.value = itemLS.quantity;
+  
 
-  const dataId = cartArticle.getAttribute("data-id");
-  const dataColor = cartArticle.getAttribute("data-color");
 
-  itemQuantity.addEventListener("change", (event) => {
-    const newQuantity = parseInt(event.target.value);
-    if (!isNaN(newQuantity)) {
-      itemLS.quantity = newQuantity;
-      saveBasket();
-    }
-  });
 
   const deleteElementContainer = document.createElement("div");
   deleteElementContainer.classList.add("cart__item__content__settings__delete");
@@ -115,45 +107,15 @@ function showItems(itemLS, apiProduct) {
   innerQuantityContainer.appendChild(itemQuantity);
   deleteElementContainer.appendChild(deleteElement);
 
-  // const contentElement = document.createElement("h2")
-  // contentElement.innerText = apiProduct.name
-  // const descriptionElement = document.querySelector("cart__item__content")
-  // descriptionElement.appendChild(contentElement)
-
-  // const nameElement = document.createElement("h2");
-  // nameElement.innerText = apiProduct.name;
-  // const itemContent = document.querySelector(".name");
-  // itemContent.appendChild(nameElement)
-
-  // const colorElement = document.createElement("p");
-  // colorElement.innerText = apiProduct.name + "\n" + itemLS.option + "\n" + apiProduct.price + "€" + "\n" + "quantité: " + itemLS.quantity;
-  // const colorChoice = document.querySelector(".color-choice");
-  // colorChoice.appendChild(colorElement)
-
-  // const inputQuantity = document.getElementsByName("itemQuantity");
-
-  // inputQuantity.value = itemLS.quantity
-
-  // cart.appendChild(divImage, colorChoice)
-
-  // document.getElementsByClassName("price").innerHTML = apiProduct.price
-  // const priceElement = document.createElement("p");
-  // priceElement.innerText = apiProduct.price;
-  // const priceProduct = document.querySelector(".price");
-  // priceProduct.appendChild(priceElement)
-
-  // const quantityElement = document.createElement("p")
-  // quantityElement.innerText = itemLS.quantity
-
-  // const colorChoice = document.querySelector(".color-choice");
-  // colorChoice.appendChild(colorElement)
-
+  changeQuantity(itemQuantity) // pour modifier les quantités des produits
+}
   // function removeElement(itemLS, apiProduct, selectedProducts) {
   // selectedProducts = selectedProducts.filter((p) => p.id != itemLS.id);
   // saveBasket(selectedProducts);
   // }
   function saveBasket(itemLS) {
-    localStorage.setItem("produit", JSON.stringify([itemLS]));
+    localStorage.setItem("produit", JSON.stringify(itemLS));
+    showTotal(itemLS)
   }
 
   console.log(shoppingList);
@@ -172,7 +134,27 @@ function showItems(itemLS, apiProduct) {
       saveBasket();
     }
   });
-}
+
+  function changeQuantity (itemQuantity) {
+  itemQuantity.addEventListener("change", (event) => {
+    console.log("test")
+    const newQuantity = parseInt(event.target.value);
+    const article = event.target.closest("article")
+    const dataId = article.getAttribute("data-id");
+    const dataColor = article.getAttribute("data-color");
+    const index = shoppingList.findIndex((itemLS) =>
+      dataId === itemLS.idProduct &&
+      dataColor === itemLS.option
+    );
+    console.log(index);
+    if (index === -1) {
+      return
+    } else {
+      shoppingList[index].quantity = parseInt(newQuantity)
+      saveBasket(shoppingList)
+    }
+  });
+  }
 
 function showTotal(shoppingList) {
   console.log(shoppingList)
