@@ -73,9 +73,6 @@ function showItems(itemLS, apiProduct) {
   itemQuantity.min = 1;
   itemQuantity.max = 100;
   itemQuantity.value = itemLS.quantity;
-  
-
-
 
   const deleteElementContainer = document.createElement("div");
   deleteElementContainer.classList.add("cart__item__content__settings__delete");
@@ -107,64 +104,93 @@ function showItems(itemLS, apiProduct) {
   innerQuantityContainer.appendChild(itemQuantity);
   deleteElementContainer.appendChild(deleteElement);
 
-  changeQuantity(itemQuantity) // pour modifier les quantités des produits
+  changeQuantity(itemQuantity); // pour modifier les quantités des produits
+  removeElement(deleteElement);
 }
-  // function removeElement(itemLS, apiProduct, selectedProducts) {
-  // selectedProducts = selectedProducts.filter((p) => p.id != itemLS.id);
-  // saveBasket(selectedProducts);
-  // }
-  function saveBasket(itemLS) {
-    localStorage.setItem("produit", JSON.stringify(itemLS));
-    showTotal(itemLS)
+// function removeElement(itemLS, apiProduct, selectedProducts) {
+// selectedProducts = selectedProducts.filter((p) => p.id != itemLS.id);
+// saveBasket(selectedProducts);
+// }
+function saveBasket(itemLS) {
+  localStorage.setItem("produit", JSON.stringify(itemLS));
+  showTotal(itemLS);
+}
+
+console.log(shoppingList);
+deleteElement.addEventListener("click", (event) => {
+  const parentElement = event.target.closest("cart__item");
+  const itemId = event.target.closest(".cart__item").getAttribute("data-id");
+  const selectedItemIndex = shoppingList.findIndex((p) => p._id === itemId);
+  if (selectedItemIndex > -1) {
+    shoppingList.splice(selectedItemIndex);
+    saveBasket(shoppingList);
+    event.target.closest(".cart__item").remove();
+    console.log("cliqué");
   }
+  if (parentElement) {
+    parentElement.remove();
+    saveBasket();
+  }
+});
 
-  console.log(shoppingList);
-  deleteElement.addEventListener("click", (event) => {
-    const parentElement = event.target.closest("cart__item");
-    const itemId = event.target.closest(".cart__item").getAttribute("data-id");
-    const selectedItemIndex = shoppingList.findIndex((p) => p._id === itemId);
-    if (selectedItemIndex > -1) {
-      shoppingList.splice(selectedItemIndex);
-      saveBasket(shoppingList);
-      event.target.closest(".cart__item").remove();
-      console.log("cliqué");
-    }
-    if (parentElement) {
-      parentElement.remove();
-      saveBasket();
-    }
-  });
-
-  function changeQuantity (itemQuantity) {
+function changeQuantity(itemQuantity) {
   itemQuantity.addEventListener("change", (event) => {
-    console.log("test")
+    console.log("test");
     const newQuantity = parseInt(event.target.value);
-    const article = event.target.closest("article")
+    const article = event.target.closest("article");
     const dataId = article.getAttribute("data-id");
     const dataColor = article.getAttribute("data-color");
-    const index = shoppingList.findIndex((itemLS) =>
-      dataId === itemLS.idProduct &&
-      dataColor === itemLS.option
+    const index = shoppingList.findIndex(
+      (itemLS) => dataId === itemLS.idProduct && dataColor === itemLS.option
     );
     console.log(index);
     if (index === -1) {
-      return
+      return;
     } else {
-      shoppingList[index].quantity = parseInt(newQuantity)
-      saveBasket(shoppingList)
+      shoppingList[index].quantity = parseInt(newQuantity);
+      saveBasket(shoppingList);
     }
   });
-  }
+}
+
+function removeElement(deleteElement) {
+  deleteElement.addEventListener("click", (event) => {
+    const article = event.target.closest("article");
+    const dataId = article.getAttribute("data-id");
+    const dataColor = article.getAttribute("data-color");
+    const index = shoppingList.findIndex(
+      (itemLS) => dataId === itemLS.idProduct && dataColor === itemLS.option
+    );
+    console.log(index);
+    if (index === -1) {
+      return;
+    } 
+    else {
+      const itemId = shoppingList[index].idProduct;
+      const itemOption = shoppingList[index].option;
+      const supressibleIndex = `${itemId}-${itemOption}`;
+      localStorage.removeItem(supressibleIndex);
+      shoppingList.splice(index, 1);
+      saveBasket(shoppingList);
+      console.log(shoppingList)
+      const parentElement = event.target.closest(".cart__item");
+      if (parentElement) {
+      parentElement.remove();
+      }
+    }
+  });
+}
 
 function showTotal(shoppingList) {
-  console.log(shoppingList)
+  console.log(shoppingList);
   let totalItemsQuantity = 0;
   let totalCost = 0;
   for (let i = 0; i < shoppingList.length; i++) {
     totalItemsQuantity =
       parseInt(shoppingList[i].quantity) + parseInt(totalItemsQuantity);
-    totalCost = parseInt(shoppingList[i].price * shoppingList[i].quantity) +
-    parseInt(totalCost);
+    totalCost =
+      parseInt(shoppingList[i].price * shoppingList[i].quantity) +
+      parseInt(totalCost);
   }
 
   // shoppingList.forEach(function (product) {
