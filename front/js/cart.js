@@ -116,26 +116,9 @@ function saveBasket(itemLS) {
   showTotal(itemLS);
 }
 
-console.log(shoppingList);
-deleteElement.addEventListener("click", (event) => {
-  const parentElement = event.target.closest("cart__item");
-  const itemId = event.target.closest(".cart__item").getAttribute("data-id");
-  const selectedItemIndex = shoppingList.findIndex((p) => p._id === itemId);
-  if (selectedItemIndex > -1) {
-    shoppingList.splice(selectedItemIndex);
-    saveBasket(shoppingList);
-    event.target.closest(".cart__item").remove();
-    console.log("cliqué");
-  }
-  if (parentElement) {
-    parentElement.remove();
-    saveBasket();
-  }
-});
 
 function changeQuantity(itemQuantity) {
   itemQuantity.addEventListener("change", (event) => {
-    console.log("test");
     const newQuantity = parseInt(event.target.value);
     const article = event.target.closest("article");
     const dataId = article.getAttribute("data-id");
@@ -207,3 +190,72 @@ function showTotal(shoppingList) {
 //   let price = itemLS.price;
 //   let quantity = itemLS.quantity;
 //  }
+ // Cette regex est vraie uniquement s'il n'y a que des lettres et/ou "é"/"è"" ""ç"
+  const regexLetters = /^[a-zA-Zéè ç]+$/
+function checkNames(firstName) {
+  return regexLetters.test(firstName)
+}
+function ckeckLastName(lastName) {
+  return regexLetters.test(lastName)
+}
+
+function checkCity(city) {
+  return regexLetters.test(city)
+}
+
+const regexLettersNumbers = /^[a-zA-Z0-9éè ç]+$/
+function checkAddress(address) {
+  return regexLettersNumbers.test(address)
+}
+
+function checkEmail(email) {
+  const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return regexEmail.test(email);
+}
+function validate() {
+  const firstName = document.getElementById("firstName").value
+  const email = document.getElementById("email").value;
+  const lastName = document.getElementById("lastName").value;
+  const city = document.getElementById("city").value;
+  const address = document.getElementById("address").value;
+
+  if (checkNames(firstName)) {
+    document.getElementById("firstNameErrorMsg").innerHTML = ""
+  } else {
+    document.getElementById("firstNameErrorMsg").innerHTML = "le prénom ne doit contenir que des lettres."
+  }
+
+  if (checkNames(lastName)) {
+    document.getElementById("lastNameErrorMsg").innerHTML = ""
+  } else {
+    document.getElementById("lastNameErrorMsg").innerHTML = "le nom ne doit contenir que des lettres."
+  }
+
+  if (checkCity(city)) {
+    document.getElementById("cityErrorMsg").innerHTML = ""
+  } else {
+    document.getElementById("cityErrorMsg").innerHTML = "La ville ne doit contenir que des lettres."
+  }
+
+  if (checkAddress(address)) {
+    document.getElementById("addressErrorMsg").innerHTML = ""
+  } else {
+    document.getElementById("addressErrorMsg").innerHTML = "L'adresse ne peut contenir que des lettres et des nombres."
+  }
+
+
+  if (checkEmail(email)) {
+    document.getElementById("emailErrorMsg").innerHTML = ""
+  } else {
+    document.getElementById("emailErrorMsg").innerHTML = "L'adresse email n'est pas bonne."
+  }
+  // if (checkEmail(email) && )
+}
+
+const submit = document.getElementById("order");
+submit.addEventListener("click", (e) => {
+  e.preventDefault()
+  validate()
+})
+
+// Fetch post
