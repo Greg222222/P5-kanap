@@ -112,6 +112,7 @@ addToCart.addEventListener("click", (event) => {
       localStorage.setItem("produit", JSON.stringify(productLocalStorage));
     }
   }
+  // Force la valeur à être entre 1 et 100
   if (
     document.getElementById("quantity").value < 1 ||
     document.getElementById("quantity").value > 100

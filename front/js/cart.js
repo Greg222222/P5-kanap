@@ -1,5 +1,6 @@
 let selectedProducts = [];
 let shoppingList = [];
+let products = []
 
 fetch("http://localhost:3000/api/products/?")
   .then((res) => res.json())
@@ -111,12 +112,14 @@ function showItems(itemLS, apiProduct) {
 // selectedProducts = selectedProducts.filter((p) => p.id != itemLS.id);
 // saveBasket(selectedProducts);
 // }
+
+// Fonction utile pour faire apparaître les modifications
 function saveBasket(itemLS) {
   localStorage.setItem("produit", JSON.stringify(itemLS));
   showTotal(itemLS);
 }
 
-
+// Sert à changer la quantité, additionnée à la fonction saveBasket
 function changeQuantity(itemQuantity) {
   itemQuantity.addEventListener("change", (event) => {
     const newQuantity = parseInt(event.target.value);
@@ -135,7 +138,7 @@ function changeQuantity(itemQuantity) {
     }
   });
 }
-
+// Pour supprimer un élément du panier
 function removeElement(deleteElement) {
   deleteElement.addEventListener("click", (event) => {
     const article = event.target.closest("article");
@@ -163,7 +166,7 @@ function removeElement(deleteElement) {
     }
   });
 }
-
+// Montre le prix total et la quantité totale dans le panier
 function showTotal(shoppingList) {
   console.log(shoppingList);
   let totalItemsQuantity = 0;
@@ -186,10 +189,7 @@ function showTotal(shoppingList) {
   totalPrice.innerHTML = totalCost;
 }
 
-// function totalPrice(itemLS, apiProduct) // {
-//   let price = itemLS.price;
-//   let quantity = itemLS.quantity;
-//  }
+// On vérifie tous les champs que l'utilisateur va remplir, question de sécurité
  // Cette regex est vraie uniquement s'il n'y a que des lettres et/ou "é"/"è"" ""ç"
   const regexLetters = /^[a-zA-Zéè ç]+$/
 function checkNames(firstName) {
@@ -209,9 +209,11 @@ function checkAddress(address) {
 }
 
 function checkEmail(email) {
+  // La regex de l'email est plus complexe car oblige certains caractères entre des champs de caracteres à remplir par l'utilisateur
   const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return regexEmail.test(email);
 }
+// Fonction à utiliser quand l'utilisateur valide son panier
 function validate() {
   const firstName = document.getElementById("firstName").value
   const email = document.getElementById("email").value;
@@ -243,19 +245,40 @@ function validate() {
     document.getElementById("addressErrorMsg").innerHTML = "L'adresse ne peut contenir que des lettres et des nombres."
   }
 
-
   if (checkEmail(email)) {
     document.getElementById("emailErrorMsg").innerHTML = ""
   } else {
     document.getElementById("emailErrorMsg").innerHTML = "L'adresse email n'est pas bonne."
   }
-  // if (checkEmail(email) && )
-}
 
+  let contact = {
+    firstName: firstName, 
+    lastName: lastName, 
+    city: city,
+    address: address, 
+    email: email
+  }
+  
+  if (checkNames(firstName) && checkNames(lastName) && checkCity(city) && checkAddress(address) && checkEmail(email)) {
+    console.log(JSON.stringify({contact, products}))
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({contact, products})
+      })
+      // Il faut retourner shoppingList et orderId
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
+    }
+}
+// Ce qu'il se passe quand l'utilisateur clique sur le bouton valider
 const submit = document.getElementById("order");
 submit.addEventListener("click", (e) => {
   e.preventDefault()
   validate()
+  shoppingList.forEach(element => {
+    products.push(element)    
+  });
 })
-
-// Fetch post
