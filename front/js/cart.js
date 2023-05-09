@@ -1,6 +1,5 @@
 let selectedProducts = [];
 let shoppingList = [];
-let products = []
 
 fetch("http://localhost:3000/api/products/?")
   .then((res) => res.json())
@@ -191,7 +190,7 @@ function showTotal(shoppingList) {
 
 // On vérifie tous les champs que l'utilisateur va remplir, question de sécurité
  // Cette regex est vraie uniquement s'il n'y a que des lettres et/ou "é"/"è"" ""ç"
-  const regexLetters = /^[a-zA-Zéè ç]+$/
+  const regexLetters =/^[a-zA-ZÀ-ÖØ-öø-ÿçÇ][ a-zA-ZÀ-ÖØ-öø-ÿçÇ]+$/
 function checkNames(firstName) {
   return regexLetters.test(firstName)
 }
@@ -203,7 +202,7 @@ function checkCity(city) {
   return regexLetters.test(city)
 }
 
-const regexLettersNumbers = /^[a-zA-Z0-9éè ç]+$/
+const regexLettersNumbers = /^[a-zA-ZÀ-ÖØ-öø-ÿçÇ0-9 ]+$/
 function checkAddress(address) {
   return regexLettersNumbers.test(address)
 }
@@ -215,6 +214,11 @@ function checkEmail(email) {
 }
 // Fonction à utiliser quand l'utilisateur valide son panier
 function validate() {
+  let products = []
+  shoppingList.forEach(element => {
+    console.log(element)
+    products.push(element.idProduct)
+  });
   const firstName = document.getElementById("firstName").value
   const email = document.getElementById("email").value;
   const lastName = document.getElementById("lastName").value;
@@ -270,6 +274,7 @@ function validate() {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        window.location.href = "./confirmation.html?id=" + data.orderId;
       })
     }
 }
@@ -278,7 +283,4 @@ const submit = document.getElementById("order");
 submit.addEventListener("click", (e) => {
   e.preventDefault()
   validate()
-  shoppingList.forEach(element => {
-    products.push(element)    
-  });
 })
