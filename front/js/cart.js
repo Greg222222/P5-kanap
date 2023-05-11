@@ -27,6 +27,7 @@ fetch("http://localhost:3000/api/products/?")
     console.log(error);
   });
 
+// La fonction qui va afficher tous les articles
 function showItems(itemLS, apiProduct) {
   const cart = document.getElementById("cart__item");
 
@@ -80,15 +81,6 @@ function showItems(itemLS, apiProduct) {
   const deleteElement = document.createElement("p");
   deleteElement.innerText = "Supprimer";
 
-  // deleteElement.forEach((deleteElement) => {
-  // deleteElement.addEventListener("click", (event) => {
-  // const parentElement = event.target.closest(".cart");
-  // if (parentElement) {
-  // parentElement.remove();
-  // }
-  // });
-  // });
-
   cart.appendChild(cartArticle);
   imageContainer.appendChild(imageElement);
   cartArticle.appendChild(imageContainer);
@@ -129,11 +121,17 @@ function changeQuantity(itemQuantity) {
       (itemLS) => dataId === itemLS.idProduct && dataColor === itemLS.option
     );
     console.log(index);
-    if (index === -1) {
-      return;
-    } else {
-      shoppingList[index].quantity = parseInt(newQuantity);
-      saveBasket(shoppingList);
+
+    if (
+      newQuantity > 0 &&
+      newQuantity < 100
+    ) {
+      if (index === -1) {
+        return;
+      } else {
+        shoppingList[index].quantity = parseInt(newQuantity);
+        saveBasket(shoppingList);
+      }
     }
   });
 }
@@ -149,18 +147,17 @@ function removeElement(deleteElement) {
     console.log(index);
     if (index === -1) {
       return;
-    } 
-    else {
+    } else {
       const itemId = shoppingList[index].idProduct;
       const itemOption = shoppingList[index].option;
       const supressibleIndex = `${itemId}-${itemOption}`;
       localStorage.removeItem(supressibleIndex);
       shoppingList.splice(index, 1);
       saveBasket(shoppingList);
-      console.log(shoppingList)
+      console.log(shoppingList);
       const parentElement = event.target.closest(".cart__item");
       if (parentElement) {
-      parentElement.remove();
+        parentElement.remove();
       }
     }
   });
@@ -189,98 +186,114 @@ function showTotal(shoppingList) {
 }
 
 // On vérifie tous les champs que l'utilisateur va remplir, question de sécurité
- // Cette regex est vraie uniquement s'il n'y a que des lettres et/ou "é"/"è"" ""ç"
-  const regexLetters =/^[a-zA-ZÀ-ÖØ-öø-ÿçÇ][ a-zA-ZÀ-ÖØ-öø-ÿçÇ]+$/
+// Cette regex est vraie uniquement s'il n'y a que des lettres et/ou "é"/"è"" ""ç"
+const regexLetters = /^[a-zA-ZÀ-ÖØ-öø-ÿçÇ][ a-zA-ZÀ-ÖØ-öø-ÿçÇ]+$/;
 function checkNames(firstName) {
-  return regexLetters.test(firstName)
+  return regexLetters.test(firstName);
 }
 function ckeckLastName(lastName) {
-  return regexLetters.test(lastName)
+  return regexLetters.test(lastName);
 }
 
 function checkCity(city) {
-  return regexLetters.test(city)
+  return regexLetters.test(city);
 }
 
-const regexLettersNumbers = /^[a-zA-ZÀ-ÖØ-öø-ÿçÇ0-9 ]+$/
+const regexLettersNumbers = /^[a-zA-ZÀ-ÖØ-öø-ÿçÇ0-9 ]+$/;
 function checkAddress(address) {
-  return regexLettersNumbers.test(address)
+  return regexLettersNumbers.test(address);
 }
 
 function checkEmail(email) {
   // La regex de l'email est plus complexe car oblige certains caractères entre des champs de caracteres à remplir par l'utilisateur
-  const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const regexEmail =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return regexEmail.test(email);
 }
 // Fonction à utiliser quand l'utilisateur valide son panier
 function validate() {
-  let products = []
-  shoppingList.forEach(element => {
-    console.log(element)
-    products.push(element.idProduct)
+  let products = [];
+  shoppingList.forEach((element) => {
+    console.log(element);
+    products.push(element.idProduct);
   });
-  const firstName = document.getElementById("firstName").value
+  const firstName = document.getElementById("firstName").value;
   const email = document.getElementById("email").value;
   const lastName = document.getElementById("lastName").value;
   const city = document.getElementById("city").value;
   const address = document.getElementById("address").value;
 
   if (checkNames(firstName)) {
-    document.getElementById("firstNameErrorMsg").innerHTML = ""
+    document.getElementById("firstNameErrorMsg").innerHTML = "";
   } else {
-    document.getElementById("firstNameErrorMsg").innerHTML = "le prénom ne doit contenir que des lettres."
+    document.getElementById("firstNameErrorMsg").innerHTML =
+      "le prénom ne doit contenir que des lettres.";
   }
 
   if (checkNames(lastName)) {
-    document.getElementById("lastNameErrorMsg").innerHTML = ""
+    document.getElementById("lastNameErrorMsg").innerHTML = "";
   } else {
-    document.getElementById("lastNameErrorMsg").innerHTML = "le nom ne doit contenir que des lettres."
+    document.getElementById("lastNameErrorMsg").innerHTML =
+      "le nom ne doit contenir que des lettres.";
   }
 
   if (checkCity(city)) {
-    document.getElementById("cityErrorMsg").innerHTML = ""
+    document.getElementById("cityErrorMsg").innerHTML = "";
   } else {
-    document.getElementById("cityErrorMsg").innerHTML = "La ville ne doit contenir que des lettres."
+    document.getElementById("cityErrorMsg").innerHTML =
+      "La ville ne doit contenir que des lettres.";
   }
 
   if (checkAddress(address)) {
-    document.getElementById("addressErrorMsg").innerHTML = ""
+    document.getElementById("addressErrorMsg").innerHTML = "";
   } else {
-    document.getElementById("addressErrorMsg").innerHTML = "L'adresse ne peut contenir que des lettres et des nombres."
+    document.getElementById("addressErrorMsg").innerHTML =
+      "L'adresse ne peut contenir que des lettres et des nombres.";
   }
 
   if (checkEmail(email)) {
-    document.getElementById("emailErrorMsg").innerHTML = ""
+    document.getElementById("emailErrorMsg").innerHTML = "";
   } else {
-    document.getElementById("emailErrorMsg").innerHTML = "L'adresse email n'est pas bonne."
+    document.getElementById("emailErrorMsg").innerHTML =
+      "L'adresse email n'est pas bonne.";
   }
 
   let contact = {
-    firstName: firstName, 
-    lastName: lastName, 
+    firstName: firstName,
+    lastName: lastName,
     city: city,
-    address: address, 
-    email: email
-  }
-  
-  if (checkNames(firstName) && checkNames(lastName) && checkCity(city) && checkAddress(address) && checkEmail(email)) {
-    console.log(JSON.stringify({contact, products}))
+    address: address,
+    email: email,
+  };
+
+  if (
+    checkNames(firstName) &&
+    checkNames(lastName) &&
+    checkCity(city) &&
+    checkAddress(address) &&
+    checkEmail(email)
+  ) {
+    console.log(JSON.stringify({ contact, products }));
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({contact, products})
-      })
+      body: JSON.stringify({ contact, products }),
+    })
       // Il faut retourner shoppingList et orderId
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        window.localStorage.clear()
         window.location.href = "./confirmation.html?id=" + data.orderId;
-      })
-    }
+      });
+  }
 }
 // Ce qu'il se passe quand l'utilisateur clique sur le bouton valider
 const submit = document.getElementById("order");
 submit.addEventListener("click", (e) => {
-  e.preventDefault()
-  validate()
-})
+console.log(JSON.parse(localStorage.getItem("produit")))
+  if (JSON.parse(localStorage.getItem("produit")).length > 0) {
+  e.preventDefault();
+  validate();
+  }
+});

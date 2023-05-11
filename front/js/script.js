@@ -32,7 +32,7 @@ function createBlocks (product){
     // L'image
     const imageElement = document.createElement ("img");
     imageElement.src = product.imageUrl;
-    imageElement.alt = "azrer"
+    imageElement.alt = "Photo d'un canapé"
     // Balises parentes
     const articleElement = document.createElement("article");
 

@@ -1,8 +1,10 @@
-fetch("http://localhost:3000/api/products/order/")
-.then((res) => res.json())
-.then((data) => {
-    tellCommandNumber(data)
-})
-function tellCommandNumber(data) {
-orderId.innerText = data.orderId
+let params = new URLSearchParams(window.location.search);
+console.log(params);
+let id = params.get("id");
+console.log(id);
+
+
+function tellCommandNumber() {
+orderId.innerText = id
 }
+tellCommandNumber()
